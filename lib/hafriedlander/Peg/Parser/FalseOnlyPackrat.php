@@ -3,33 +3,43 @@
 namespace hafriedlander\Peg\Parser;
 
 /**
- * FalseOnlyPackrat only remembers which results where false. Experimental.
+ * FalseOnlyPackrat only remembers which results where false.
+ * Experimental.
  *
  * @author Hamish Friedlander
  */
-class FalseOnlyPackrat extends Basic {
-	function __construct( $string ) {
-		parent::__construct( $string ) ;
+class FalseOnlyPackrat extends Basic
+{
+    protected $packstatebase;
+    protected $packstate;
 
-		$this->packstatebase = str_repeat( '.', strlen( $string ) ) ;
-		$this->packstate = array() ;
-	}
+    public function setSource($string)
+    {
+        parent::setSource($string);
 
-	function packhas( $key, $pos ) {
-		return isset( $this->packstate[$key] ) && $this->packstate[$key][$pos] == 'F' ;
-	}
+        $this->packstatebase = str_repeat('.', strlen($string));
+        $this->packstate = array();
+    }
 
-	function packread( $key, $pos ) {
-		return FALSE ;
-	}
+    public function packhas($key, $pos)
+    {
+        return isset($this->packstate[$key]) && 'F' === $this->packstate[$key][$pos];
+    }
 
-	function packwrite( $key, $pos, $res ) {
-		if ( !isset( $this->packstate[$key] ) ) $this->packstate[$key] = $this->packstatebase ;
+    public function packread($key, $pos)
+    {
+        return false;
+    }
 
-		if ( $res === FALSE ) {
-			$this->packstate[$key][$pos] = 'F' ;
-		}
+    public function packwrite($key, $pos, $res)
+    {
+        if (!isset($this->packstate[$key])) {
+            $this->packstate[$key] = $this->packstatebase;
+        }
+        if (false === $res) {
+            $this->packstate[$key][$pos] = 'F';
+        }
 
-		return $res ;
-	}
+        return $res;
+    }
 }

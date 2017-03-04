@@ -3,27 +3,31 @@
 namespace hafriedlander\Peg\Compiler\Rule;
 
 /**
- * Handles storing of information for an expression that applies to the <i>next</i> token, and deletion of that
- * information after applying
+ * Handles storing of information for an expression that applys to the <i>next</i> token,
+ * and deletion of that information after applying
  *
  * @author Hamish Friedlander
  */
-class PendingState {
-	function __construct() {
-		$this->what = NULL ;
-	}
+class PendingState
+{
+    protected $prop_name = null;
+    protected $prop_val = null;
 
-	function set( $what, $val = TRUE ) {
-		$this->what = $what ;
-		$this->val = $val ;
-	}
+    public function set($what, $value=true)
+    {
+        $this->prop_name = $what;
+        $this->prop_val = $value;
+    }
 
-	function apply_if_present( $on ) {
-		if ( $this->what !== NULL ) {
-			$what = $this->what ;
-			$on->$what = $this->val ;
+    public function apply_if_present($on)
+    {
+        if (null !== $this->prop_name) {
 
-			$this->what = NULL ;
-		}
-	}
+            $what = $this->prop_name;
+            $on->$what = $this->prop_val;
+
+            $this->prop_name = null;
+
+        }
+    }
 }

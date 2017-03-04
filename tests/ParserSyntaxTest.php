@@ -6,17 +6,16 @@ class ParserSyntaxTest extends ParserTestBase {
 
 	public function testBasicRuleSyntax() {
 		$parser = $this->buildParser('
-			/*!* BasicRuleSyntax
-			Foo: "a" "b"
-			Bar: "a"
-				"b"
-			Baz:
-				"a" "b"
-			Qux:
-				"a"
-				"b"
-			Quux:	"a"
-			*/
+/*!* BasicRuleSyntax
+Foo: "a" "b"
+Bar: "a"
+  "b"
+Baz:
+  "a" "b"
+Qux:
+  "a"
+  "b"
+*/
 		');
 
 		$parser->assertMatches('Foo', 'ab');

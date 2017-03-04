@@ -2,20 +2,34 @@
 
 namespace hafriedlander\Peg\Compiler\Token;
 
-abstract class Expressionable extends Terminal {
+abstract class Expressionable extends Terminal
+{
+    const EXPRESSION_RX = '/ \$(\w+) | { \$(\w+) } /x';
 
-	static $expression_rx = '/ \$(\w+) | { \$(\w+) } /x';
+    public function contains_expression($value)
+    {
+        return preg_match(self::EXPRESSION_RX, $value);
+    }
 
-	function contains_expression( $value ){
-		return preg_match(self::$expression_rx, $value);
-	}
+    public function replace_expression($value)
+    {
+        return preg_replace_callback(
+            self::EXPRESSION_RX,
+            array($this, 'expression_replace_cb'),
+            $value
+        );
+    }
 
-	function expression_replace($matches) {
-		return '\'.$this->expression($result, $stack, \'' . (!empty($matches[1]) ? $matches[1] : $matches[2]) . "').'";
-	}
+    protected function expression_replace_cb($matches)
+    {
+        return '\'.$this->expression($result, $stack, \''
+            . (!empty($matches[1]) ? $matches[1] : $matches[2])
+            . "').'";
+    }
 
-	function match_code( $value ) {
-		$value = preg_replace_callback(self::$expression_rx, array($this, 'expression_replace'), $value);
-		return parent::match_code($value);
-	}
+    public function match_code($value)
+    {
+        $value = $this->replace_expression($value);
+        return parent::match_code($value);
+    }
 }
